@@ -1,0 +1,246 @@
+<template>
+  <div class="tags-view-container">
+  	<div class="nav-show">
+	    <scroll-pane ref="scrollPane" class="tags-view-wrapper">
+	      <router-link
+	        v-for="tag in visitedViews"
+	        ref="tag"
+	        :class="isActive(tag)?'active':''"
+	        :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
+	        :key="tag.path"
+	        tag="span"
+	        class="tags-view-item"
+	        @click.middle.native="closeSelectedTag(tag)"
+	        @contextmenu.prevent.native="openMenu(tag,$event)">
+	        {{ generateTitle(tag.title) }}
+	        <span class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
+	      </router-link>
+	    </scroll-pane>
+   </div>
+    <breadcrumb class="nav-position"/>
+    <el-button class="settings" type="primary" icon="iconfont uxd-setting" circle @click="toggleSetting = !toggleSetting"></el-button>
+    
+    <customizer v-model="toggleSetting"/>
+    <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
+      <li @click="refreshSelectedTag(selectedTag)">{{ $t('tagsView.refresh') }}</li>
+      <li @click="closeSelectedTag(selectedTag)">{{ $t('tagsView.close') }}</li>
+      <li @click="closeOthersTags">{{ $t('tagsView.closeOthers') }}</li>
+      <li @click="closeAllTags">{{ $t('tagsView.closeAll') }}</li>
+    </ul>
+  </div>
+</template>
+
+<script>
+import ScrollPane from '@/components/ScrollPane'
+import { generateTitle } from '@/utils/i18n'
+import Breadcrumb from '@/components/Breadcrumb'
+import Customizer from '@/components/customizer'
+export default {
+  components: { ScrollPane, Breadcrumb, Customizer },
+  data() {
+    return {
+      visible: false,
+      toggleSetting: false,
+      top: 0,
+      left: 0,
+      selectedTag: {}
+    }
+  },
+  computed: {
+    visitedViews() {
+      return this.$store.state.tagsView.visitedViews
+    }
+  },
+  watch: {
+    $route() {
+      this.addViewTags()
+      this.moveToCurrentTag()
+    },
+    visible(value) {
+      if (value) {
+        document.body.addEventListener('click', this.closeMenu)
+      } else {
+        document.body.removeEventListener('click', this.closeMenu)
+      }
+    }
+  },
+  mounted() {
+    this.addViewTags()
+  },
+  methods: {
+    generateTitle, // generateTitle by vue-i18n
+    isActive(route) {
+      return route.path === this.$route.path
+    },
+    addViewTags() {
+      const { name } = this.$route
+      if (name) {
+        this.$store.dispatch('addView', this.$route)
+      }
+      return false
+    },
+    moveToCurrentTag() {
+      const tags = this.$refs.tag
+      this.$nextTick(() => {
+        for (const tag of tags) {
+          if (tag.to.path === this.$route.path) {
+            this.$refs.scrollPane.moveToTarget(tag)
+
+            // when query is different then update
+            if (tag.to.fullPath !== this.$route.fullPath) {
+              this.$store.dispatch('updateVisitedView', this.$route)
+            }
+
+            break
+          }
+        }
+      })
+    },
+    refreshSelectedTag(view) {
+      this.$store.dispatch('delCachedView', view).then(() => {
+        const { fullPath } = view
+        this.$nextTick(() => {
+          this.$router.replace({
+            path: '/redirect' + fullPath
+          })
+        })
+      })
+    },
+    closeSelectedTag(view) {
+      this.$store.dispatch('delView', view).then(({ visitedViews }) => {
+        if (this.isActive(view)) {
+          const latestView = visitedViews.slice(-1)[0]
+          if (latestView) {
+            this.$router.push(latestView)
+          } else {
+            this.$router.push('/')
+          }
+        }
+      })
+    },
+    closeOthersTags() {
+      this.$router.push(this.selectedTag)
+      this.$store.dispatch('delOthersViews', this.selectedTag).then(() => {
+        this.moveToCurrentTag()
+      })
+    },
+    closeAllTags() {
+      this.$store.dispatch('delAllViews')
+      this.$router.push('/')
+    },
+    openMenu(tag, e) {
+      const menuMinWidth = 105
+      const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
+      const offsetWidth = this.$el.offsetWidth // container width
+      const maxLeft = offsetWidth - menuMinWidth // left boundary
+      const left = e.clientX - offsetLeft + 15 // 15: margin right
+
+      if (left > maxLeft) {
+        this.left = maxLeft
+      } else {
+        this.left = left
+      }
+      this.top = e.clientY
+
+      this.visible = true
+      this.selectedTag = tag
+    },
+    closeMenu() {
+      this.visible = false
+    }
+  }
+}
+</script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+.tags-view-container {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  .nav-show{
+  	flex: 1;
+  	height: 50px;
+  }
+  .settings{
+  	margin-right: 25px;
+  }
+  .nav-position{
+  	margin-right: 20px;
+  }
+  .tags-view-wrapper {
+    .tags-view-item {
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+      height: 40px;
+      line-height: 40px;
+      border: 1px solid rgba(0, 0, 0, .1);
+      border-bottom: none;
+      background: #fff;
+      padding: 0 5px 0 10px;
+      font-size: 14px;
+      margin-left: 10px;
+      &:first-of-type {
+        margin-left: 15px;
+      }
+      &:last-of-type {
+        margin-right: 15px;
+      }
+      &.active {
+        background-color: #2cabe3;
+        color: #fff;
+        border-color: #2cabe3;
+      }
+    }
+  }
+  .contextmenu {
+    margin: 0;
+    background: #fff;
+    z-index: 100;
+    position: absolute;
+    list-style-type: none;
+    padding: 5px 0;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #333;
+    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+    li {
+      margin: 0;
+      padding: 7px 16px;
+      cursor: pointer;
+      &:hover {
+        background: #eee;
+      }
+    }
+  }
+}
+</style>
+
+<style rel="stylesheet/scss" lang="scss">
+
+.tags-view-wrapper {
+  .tags-view-item {
+    .el-icon-close {
+      width: 16px;
+      height: 16px;
+      vertical-align: 2px;
+      border-radius: 50%;
+      text-align: center;
+      transition: all .3s cubic-bezier(.645, .045, .355, 1);
+      transform-origin: 100% 50%;
+      &:before {
+        transform: scale(.6);
+        display: inline-block;
+        vertical-align: -3px;
+      }
+      &:hover {
+        background-color: #b4bccc;
+        color: #fff;
+      }
+    }
+  }
+}
+</style>

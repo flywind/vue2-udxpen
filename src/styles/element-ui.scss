@@ -1,0 +1,148 @@
+ //覆盖一些element-ui样式
+
+ .el-breadcrumb__inner, .el-breadcrumb__inner a{
+  font-weight: 400!important;
+}
+
+ .el-upload {
+   input[type="file"] {
+     display: none !important;
+   }
+ }
+
+ .el-upload__input {
+   display: none;
+ }
+
+ .cell {
+   .el-tag {
+     margin-right: 0px;
+   }
+ }
+
+ .small-padding {
+   .cell {
+     padding-left: 5px;
+     padding-right: 5px;
+   }
+ }
+
+ .fixed-width{
+  .el-button--mini{
+    padding: 7px 10px;
+    width: 60px;
+  }
+ }
+
+ .status-col {
+   .cell {
+     padding: 0 10px;
+     text-align: center;
+     .el-tag {
+       margin-right: 0px;
+     }
+   }
+ }
+
+ //暂时性解决dialog 问题 https://github.com/ElemeFE/element/issues/2461
+ .el-dialog {
+   transform: none;
+   left: 0;
+   position: relative;
+   margin: 0 auto;
+ }
+
+ //文章页textarea修改样式
+ .article-textarea {
+   textarea {
+     padding-right: 40px;
+     resize: none;
+     border: none;
+     border-radius: 0px;
+     border-bottom: 1px solid #bfcbd9;
+   }
+ }
+
+ //element ui upload
+ .upload-container {
+   .el-upload {
+     width: 100%;
+     .el-upload-dragger {
+       width: 100%;
+       height: 200px;
+     }
+   }
+ }
+.el-submenu__icon-arrow{
+    transform: rotateZ(270deg);
+}
+//dropdown
+ .el-dropdown-menu{
+  a{
+    display: block
+  }
+}
+#app .sidebar-container .el-menu-item, #app .sidebar-container .el-submenu__title{
+    height: 66px;
+    line-height: 66px;
+    color: #54667a;
+}
+#app .sidebar-container .el-menu-item b,#app .sidebar-container .el-submenu__title b{
+    margin: 0 10px 0 10px;
+    font-size: 18px;
+}
+#app .sidebar-container .el-submenu .el-menu-item {
+    height: 66px;
+    line-height: 66px;
+}
+#app .sidebar-container .el-menu-item *, #app .sidebar-container .el-submenu__title *{
+    font-size: 14px;
+}
+#app .sidebar-container .el-menu[data-sidebarbg=skin1] .el-submenu__title,
+#app .sidebar-container .el-menu[data-sidebarbg=skin2] .el-submenu__title,
+#app .sidebar-container .el-menu[data-sidebarbg=skin3] .el-submenu__title,
+#app .sidebar-container .el-menu[data-sidebarbg=skin4] .el-submenu__title,
+#app .sidebar-container .el-menu[data-sidebarbg=skin5] .el-submenu__title,
+{
+    i{
+        color: #fff;
+        color: rgba(255,255,255,.6);
+    }
+}
+#app .sidebar-container .el-menu[data-sidebarbg=skin1] .is-active > .el-submenu__title{
+    background-color: #ff5050!important;
+}
+
+#app .sidebar-container .el-menu[data-sidebarbg=skin2] .is-active > .el-submenu__title{
+    background-color: #2f323e!important;
+}
+
+#app .sidebar-container .el-menu[data-sidebarbg=skin3] .is-active > .el-submenu__title{
+    background-color: #2f323e!important;
+}
+
+#app .sidebar-container .el-menu[data-sidebarbg=skin4] .is-active > .el-submenu__title{
+    background-color: #2f323e!important;
+}
+
+#app .sidebar-container .el-menu[data-sidebarbg=skin5] .is-active > .el-submenu__title{
+    background-color: #ff5050!important;
+}
+
+#app .sidebar-container .el-menu[data-sidebarbg=skin6] .is-active > .el-submenu__title{
+    background-color: #ff5050!important;
+}
+
+#app .sidebar-container .el-menu[data-sidebarbg=skin1],
+#app .sidebar-container .el-menu[data-sidebarbg=skin2],
+#app .sidebar-container .el-menu[data-sidebarbg=skin3],
+#app .sidebar-container .el-menu[data-sidebarbg=skin4],
+#app .sidebar-container .el-menu[data-sidebarbg=skin5],
+#app .sidebar-container .el-menu[data-sidebarbg=skin6],
+{
+    .el-menu-item{
+        &.is-active{
+            font-weight: bold;
+        }
+    }
+}
