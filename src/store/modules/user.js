@@ -9,9 +9,6 @@ import {
 
 const user = {
 	state: {
-		user: '',
-		status: '',
-		code: '',
 		token: getToken(),
 		name: '',
 		avatar: '',
@@ -20,17 +17,11 @@ const user = {
 	},
 
 	mutations: {
-		SET_CODE: (state, code) => {
-			state.code = code
-		},
 		SET_TOKEN: (state, token) => {
 			state.token = token
 		},
 		SET_SETTING: (state, setting) => {
 			state.setting = setting
-		},
-		SET_STATUS: (state, status) => {
-			state.status = status
 		},
 		SET_NAME: (state, name) => {
 			state.name = name

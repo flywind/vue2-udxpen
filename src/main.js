@@ -5,6 +5,8 @@ import Cookies from 'js-cookie'
 import 'animate.css'
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
+import moment from 'moment';
+import axios from 'axios'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -22,6 +24,8 @@ import './permission' // permission control
 import waves from './components/waves' // waves
 
 import * as filters from './filters' // global filters
+Vue.prototype.$moment = moment;
+Vue.prototype.$axios = axios;
 Vue.use(waves)
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
